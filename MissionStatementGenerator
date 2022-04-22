@@ -1,0 +1,216 @@
+
+# Mission Statement Generator using first order Markov Chains. Input used: The mission statements of +100 Tech, NGOs and Consulting firms compiled at a.txt
+
+# Examples from a.txt:
+
+"""
+Tumblr
+To empower creators to make their best work and get it in front of the audience they deserve.  
+
+LinkedIn    
+  To connect the world’s professionals to make them more productive and successful.  
+
+facebook    
+  To give people the power to share and make the world more open and connected.  
+
+Twitter    
+  To give everyone the power to create and share ideas and information instantly, without barriers.  
+
+   To reimagine commerce in ways that build a more fulfilling and lasting world. We are building a human, authentic and community-centric global and local marketplace.   
+
+Forbes    
+   To deliver information on the people, ideas and technologies changing the world to our community of affluent business decision makers.   
+
+Microsoft    
+   To enable people and businesses throughout the world to realize their full potential.   
+
+Google    
+   To organize the world’s information and make it universally accessible and useful.   
+
+Intel    
+   Utilize the power of Moore’s Law to bring smart, connected devices to every person on earth.   
+
+Adobe    
+   To move the web forward and give web designers and developers the best tools and services in the world.   
+
+Cisco    
+   Shape the future of the Internet by creating unprecedented value and opportunity for our customers, employees, investors, and ecosystem partners.   
+
+Red Hat 
+   To be the catalyst in communities of customers, contributors, and partners creating better technology the open source way.   
+
+Intuit    
+   To improve its customers’ financial lives so profoundly, they couldn’t imagine going back to the old way.   
+
+Starbucks    
+   Establish Starbucks as the premier purveyor of the finest coffee in the world while maintaining our uncompromising principles while we grow.   
+
+Coca Cola    
+   To refresh the world…To inspire moments of optimism and happiness…To create value and make a difference.   
+
+
+Home Depot    
+   The Home Depot is in the home improvement business and our goal is to provide the highest level of service, the broadest selection of products and the most competitive prices.   
+
+Walmart    
+   We save people money so they can live better.   
+
+Genentech 
+   To develop drugs to address significant unmet medical needs.   
+
+3M    
+   To Improve Every Life through Innovative Giving in Education, Community and the Environment.   
+
+Nike    
+   Bring inspiration and innovation to every athlete in the world.
+
+L'Oreal    
+   Offering all women and men worldwide the best of cosmetics innovation in terms of quality, efficacy and safety.
+
+Bain and Company    
+   To help our clients create such high levels of economic value that together we set new standards of excellence in our respective industries.   
+
+Toyota
+   To attract and attain customers with high-valued products and services and the most satisfying ownership experience in America.   
+
+USAA    
+   To facilitate the financial security of its members, associates, and their families through provision of a full range of highly competitive financial products and services; in so doing, USAA seeks to be the provider of choice for the military community.   
+
+McKinsey
+   To help our clients make distinctive, lasting, and substantial improvements in their performance and to build a great firm that attracts, develops, excites, and retains exceptional people.
+
+BCG
+   We go deep to unlock insight and have the courage to act. We hire the right people together to challenge established thinking and drive transformation. We work with our clients to build the capabilities that enable organizations to achieve sustainable advantage.
+"""
+
+
+def get_text(filename):
+    """Opens a file named 'filename', reads
+       it, and returns its contents (as one big string).
+    """
+    f = open(filename, encoding = 'utf-8')
+
+    text = f.read()
+    f.close()
+    return text
+
+def word_count(text):
+    """Word-counting function.
+       Counts the number of "words" (space-separated sequences) in
+       the string "text". """
+
+    LoW = text.split()    
+
+    # LoW is a List of Words, so its length is the word count.
+
+    result = len(LoW)
+
+    if result < 100:
+        print("LoW[0:result] is", LoW[0:result])  # For sanity checking...
+    else:
+        print("LoW[0:100] is", LoW[0:100])        # without going too far...
+
+    return result
+
+
+
+import string    
+                 
+def remove_punctuation(text):
+    """Accepts a string named "text".  Returns an equivalent string, _but_
+       with all non-(English)-text characters removed (keeps only
+       letters + digits)."""
+
+
+    new_text = ''
+    CHARS_TO_KEEP = string.ascii_letters + string.digits 
+    for c in text:  # c is each character
+        
+        if c in CHARS_TO_KEEP:
+            new_text += c
+        else:
+            pass 
+
+    return new_text
+
+
+def vocab_count(text):
+    """Returns a dictionary of (punctuationless, lower-cased) words in "text"."""
+
+    LoW = text.split()
+    print("There are", len(LoW), "words.")  
+    d = {}
+    for word in LoW:
+        word = remove_punctuation(word)  # Remove punctuation!
+        word = word.lower()   # Make lower case!
+
+        if word not in d:     # If it's not already in the dictionary, d
+            d[word] = 1       # Set count to 1 
+        else:                 # ..or if it IS already in the dictionary, d
+            d[word] += 1      # ..add 1 to count 
+
+    print("There are", len(d), "*distinct* words in the text.\n")
+    return d            
+
+import random 
+
+def createDictionary(text):
+    """Accepts a string of text and returns a dictionary whose keys are words encountered in the text and whose entries are a list of words that may legally follow the key word.
+    """
+
+    LoW = text.split()
+    d = {}
+    prev = "$"
+    for word in LoW:
+        if prev not in d: d[prev] = [word]   #If previous word is not in d
+        else: d[prev] += [word]              #If previous word is in d    
+        prev = word
+        if word[-1] in ".!?":
+            prev = "$"
+    return d 
+
+
+def generateText(d, N):
+    """Accepts a dictionary of word transitions d and a positive integer, n. It prints a string of n words
+    """
+    print()  
+    
+    prev = "." 
+
+    for i in range(N):
+        if prev[-1] == ".":
+            FirstRandom = random.choice(range(len(d["$"])))
+            FirstWord = d["$"][FirstRandom]
+            next_word = FirstWord  
+            prev = next_word
+
+        else:
+            
+            next_word = d[prev][random.choice(range(len(d[prev])))]
+            prev = next_word
+
+        print(next_word, end = ' ')
+
+    print()                 
+
+
+# Autogenerated examples:
+
+"""
+    Our purpose, the maintenance of sustainable solutions and actionable information instantly, without barriers. 
+    
+    We’re committed to see humanity and the vision of both people and help our city’s trailblazer spirit.  
+    
+    Serving fresh food, beverage & supplement industries, while challenging employees and delighting our civic pride-evoking tees and environmentally efficient infrastructure, and building a creative firm committed to make a renewably powered future. 
+    
+    Vital Consult has a conscious and in our mission is to build a determination to foster health of entertainment and Company Spirit.  
+    
+    To facilitate change while maintaining our broad depth of business for social and pitchers, and events. 
+    
+    Our mission is to make the most elemental ingredients and appreciate it. 
+    
+    The organisation’s overall mission is greatest, delivering sustainable advantage. 
+    
+    We’re committed change makers. It’s time to build the track and take action to build.
+
+"""
